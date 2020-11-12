@@ -27,3 +27,9 @@ Files from `precomputed results` directory (in case you get stuck):
 [slides](https://docs.google.com/presentation/d/1qvwG3MMP2xRPd4oGy6VyLXxzAKf99suKzCcMvUSFMrY/edit?usp=sharing)
 
 Walkthrough: `pipelines_day2_AFS.sh`
+
+### 3. Do-it-yourself! *Idotea baltica* ptoject
+
+bams: `/work/01211/cmonstr/lonestar/IB/recal_bams/*.bam`
+
+metadata: `https://www.dropbox.com/s/af5ggl5p7gtuccp/Idotea%20environment%20171005.csv?dl=0`
