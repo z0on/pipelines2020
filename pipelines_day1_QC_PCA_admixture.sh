@@ -122,27 +122,19 @@ cd pipes
 # creating a list of bam files to work on
 ls $BAMS > bams
 
-# entering interactive session, giving all node's memory to one process:
-idev -tpn 1 -N 1
-
-FILTERS="-uniqueOnly 1 -minMapQ 20 -maxDepth 10000"
-# if only looking at high-confidence  SNPs
-# FILTERS="-uniqueOnly 1 -minMapQ 20 -maxDepth 10000 -snp_pval 1e-5"
-
-# T O   D O : 
- TODO="-doQsDist 1 -doDepth 1 -doCounts 1 -dumpCounts 2"
-# if only looking at high-confidence SNPs:
-# TODO="-doQsDist 1 -doDepth 1 -doCounts 1 -dumpCounts 2 -doMajorMinor 1 -doMaf 1"
+# only looking at sites genotyped in at least 50% of all individuals
+FILTERS="-uniqueOnly 1 -minMapQ 20 -minInd 34 -maxDepth 10000"
+TODO="-doQsDist 1 -doDepth 1 -doCounts 1 -dumpCounts 2"
 
 # in the following line, -r argument is ~1 Mb (no need to do this for whole genome)
 # (look up lengths of your contigs in the header of *.sam files if you need)
 angsd -b bams -r chr10:1-1000000 -GL 1 $FILTERS $TODO -P 12 -out dd
 
 # summarizing results (using modified script by Matteo Fumagalli)
+module load Rstats/3.5.1
 Rscript ~/bin/plotQC.R prefix=dd
 
 # scp dd.pdf to laptop to see distribution of base quality scores and fraction of sites in each sample depending on coverage threshold
-
 # note the new file bams.qc: it lists only the bam files that are 3 SDs less than mean quality (quality = fraction of sites with >5x coverage, written in file quality.txt)
 
 #--------------- population structure (based on common polymorphisms, allele freq >0.05)
@@ -154,7 +146,7 @@ TODO="-doMajorMinor 1 -skipTriallelic 1 -doMaf 1 -doCounts 1 -makeMatrix 1 -doIB
 
 # Starting angsd with -P the number of parallel processesors. 
 echo "angsd -b bams.qc -GL 1 $FILTERS $TODO -P 12 -out OKall" >aa
-ls5_launcher_creator.py -j aa -n aa -t 0:30:00 -a mega2014 -e matz@utexas.edu -w 1
+ls5_launcher_creator.py -j aa -n aa -t 0:30:00 -a mega2014 -e matz@utexas.edu -w 1 -q normal
 cat aa.slurm | perl -pe 's/module/#SBATCH --reservation=genomics_day1\nmodule/' > aa.R.slurm
 sbatch aa.R.slurm
 
@@ -170,7 +162,7 @@ sbatch aa.R.slurm
 FILTERS="-uniqueOnly 1 -skipTriallelic 1 -minMapQ 20 -minQ 20 -dosnpstat 1 -doHWE 1 -sb_pval 1e-5 -hetbias_pval 1e-5 -minInd 52 -snp_pval 1e-5 -minMaf 0.05"
 TODO="-doMajorMinor 1 -doMaf 1 -doCounts 1 -makeMatrix 1 -doIBS 1 -doCov 1 -doGeno 8 -doPost 1 -doGlf 2"
 echo "angsd -b bams.nc -GL 1 $FILTERS $TODO -P 12 -out OK" >ab
-ls5_launcher_creator.py -j ab -n ab -t 0:30:00 -a mega2014 -e matz@utexas.edu -w 1
+ls5_launcher_creator.py -j ab -n ab -t 0:30:00 -a mega2014 -e matz@utexas.edu -w 1 -q normal
 cat ab.slurm | perl -pe 's/module/#SBATCH --reservation=genomics_day1\nmodule/' > ab.R.slurm
 sbatch ab.R.slurm
 

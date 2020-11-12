@@ -10,6 +10,7 @@ length(bams)
 
 ma = as.matrix(read.table("OKall.ibsMat"))
 dimnames(ma)=list(bams,bams)
+dim(ma)
 
 ma[1:6,1:6]
 

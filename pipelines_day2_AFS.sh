@@ -78,18 +78,57 @@ Rscript ~/AFS-analysis-with-moments/modSel_write.R contrast=ok nreps=3 args="o k
 # NOTE: do not run this! (it would take too much computer time for all of us). Use pre-computed result ok.modsel
 
 # summarizing results, writing commands to bootstrap the winning model 
-# (NOTE: for real work set nboots=100! we only use nboots=5 because we will pool results across all workshop participants)
 module load Rstats/3.5.1
-Rscript ~/AFS-analysis-with-moments/modSel_summary.R modselResult=ok.modsel nreps=4 nboots=100 args="o k 58 42 0.02 0.005"
+Rscript ~/AFS-analysis-with-moments/modSel_summary.R modselResult=ok.modsel args="o k 58 42 0.02 0.005"
 
 # ----- bootstrapping the winning model
 
 # The previous script, modSel_summary.R, produced the file ok.winboots.runs containing a list of commands to run - same model on 'nboots' bootstrap replicates. We need to launch these commands all in parallel. 
 # (how do we do it? write it yourself!)
 
+ls5_launcher_creator.py -j ok.winboots.runs -n ok.winboots.runs -t 1:00:00 -e matz@utexas.edu -w 24 -a mega2014 -q normal
+cat ok.winboots.runs.slurm | perl -pe 's/module/#SBATCH --reservation=genomics_day2\nmodule/' > ok.winboots.runs.R.slurm
+sbatch ok.winboots.runs.slurm
+
+
 # the result will be collected in ok.winboots. 
 # we must concatenate all these results - please email your ok.winboots to Misha, matz@utexas.edu, with subject "ok.winboots". Wait for Misha to email you back the concatenated file.
 # To summarize and plot results, do
 module load Rstats/3.5.1
 Rscript ~/AFS-analysis-with-moments/bestBoot_summary.R bootRes=ok.winboots
+
+
+#--------------- GADMA
+
+#installing dadi
+cd
+git clone https://bitbucket.org/gutenkunstlab/dadi.git
+cd dadi
+python setup.py install --user
+
+# installing Pillow
+python -m pip install Pillow
+
+# installing GADMA
+cd
+rm -rf GADMA
+git clone https://github.com/ctlab/GADMA.git
+cd GADMA
+python setup.py install --user
+
+# writing GADMA parameters file
+
+mv ok_1.sfs_20_20.projected ok_1_20_20.projected.sfs
+
+echo "# param_file
+Input file : ok_1_20_20.projected.sfs
+Output directory : gadma_ok
+Population labels : o , k
+Initial structure : 1,1" >gadma_params
+
+echo "gadma -p gadma_params">gad
+#echo "gadma --resume gadma_12dp">gad
+ls5_launcher_creator.py -j gad -n gad -t 14:00:00 -e matz@utexas.edu -w 1 -a tagmap -q normal
+sbatch gad.slurm
+
 
