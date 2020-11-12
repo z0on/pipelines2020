@@ -28,7 +28,8 @@ Files from `precomputed results` directory (in case you get stuck):
 
 Walkthrough: `pipelines_day2_AFS.sh`
 
-### 3. Do-it-yourself! *Idotea baltica* ptoject
+### 3. Do-it-yourself! *Idotea baltica* project
+
 
 bams: `/work/01211/cmonstr/lonestar/IB/recal_bams/*.bam`
 
