@@ -34,6 +34,6 @@ Walkthrough: `pipelines_day2_AFS.sh`
 
 ![*Idotea baltica*](isopoda_idotea_balthica_01-10-15_1.jpg)
 
-bams: `/work/01211/cmonstr/lonestar/IB/recal_bams/*.bam`
+bams: `/work/01211/cmonstr/IB/recal_bams`
 
 metadata: `https://www.dropbox.com/s/af5ggl5p7gtuccp/Idotea%20environment%20171005.csv?dl=0`
